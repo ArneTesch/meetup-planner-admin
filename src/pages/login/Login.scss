@@ -1,0 +1,15 @@
+.container {
+  width: 100vw;
+  height: 100vh;
+  color: black;
+  background-color: #2c2c54;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-form {
+  width: 60%;
+  min-height: 30rem;
+  background-color: #fff;
+}
