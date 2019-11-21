@@ -77,7 +77,7 @@ const Login: React.FC = () => {
         <div className={styles.signup}>
           <img
             src={`${window.location.origin}/assets/logo.png`}
-            srcSet={`${window.location.origin}/assets/logo@2x.png`}
+            srcSet={`${window.location.origin}/assets/logo@2x.png 2x`}
             alt="logo"
           />
           <h2>Welcome!</h2>

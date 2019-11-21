@@ -2,15 +2,58 @@
 
 .navbar {
   position: fixed;
+  overflow: hidden;
   left: 0;
   top: 0;
   bottom: 0;
   height: 100vh;
   width: 30rem;
-  background-color: $accent-color;
-  color: white;
+  background-color: white;
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+  font-family: "Open sans", sans-serif;
+  box-sizing: border-box;
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-flow: column;
+  background-color: $primary-color;
+  padding: 2rem;
+
+  & p {
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 0;
+  }
+
+  & img {
+    width: 8rem;
+    height: auto;
+  }
+}
+
+.navbar-items {
+  font-size: 1.6rem;
+  margin-top: 2.5rem;
+  & a {
+    text-decoration: none;
+    font-weight: 600;
+    color: black;
+    transition: background-color 0.2s ease;
+    background-color: rgba(white, 0.5);
+    width: 100%;
+    display: inline-block;
+    padding: 1rem 2rem;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+  }
 }
 
 .container {
-  padding-left: 30rem;
+  padding-left: calc(30rem + 1.5rem);
 }

@@ -6,7 +6,7 @@ import {
   InMemoryCache
 } from "apollo-boost";
 import React, { useState } from "react";
-import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import "./App.scss";
 import AuthContext from "./context/auth-context";
 import Login from "./pages/login/Login";
@@ -57,10 +57,13 @@ const App: React.FC = () => {
           }}
         >
           <Switch>
-            {!token && <Redirect from="/meetups" to="login" exact />}
+            <Route path="/meetups" component={Meetups} />
+            <Route path="/login" component={Login} />
+            {/* {!token && <Route path="/meetups" component={Meetups} exact />} */}
+            {/* {!token && <Redirect from="/meetups" to="login" exact />}
             {!token && <Route path="/login" component={Login} />}
-            {token && <Redirect from="/login" to="/meetups" exact />}
-            {token && <Route path="/meetups" component={Meetups} exact />}
+            {token && <Redirect from="/login" to="/meetups" exact />} */}
+            {/* {token && <Route path="/meetups" component={Meetups} exact />} */}
             {/* {!token && <Redirect to="/login" exact />} */}
           </Switch>
         </AuthContext.Provider>
