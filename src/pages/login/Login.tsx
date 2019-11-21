@@ -1,9 +1,10 @@
 import { useLazyQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
-import React from "react";
+import React, { useContext } from "react";
 import useForm from "react-hook-form";
 import * as yup from "yup";
-import "./Login.scss";
+import AuthContext from "../../context/auth-context";
+import styles from "./Login.module.scss";
 
 type FormData = {
   email: string;
@@ -32,7 +33,20 @@ const Login: React.FC = () => {
   const { register, errors, handleSubmit } = useForm<FormData>({
     validationSchema: LoginSchema
   });
-  const [login, { loading, data }] = useLazyQuery(LOGIN);
+  const [login, { loading, data }] = useLazyQuery(LOGIN, {
+    onCompleted: data => {
+      authContext.login(
+        data.adminLogin.token,
+        data.adminLogin.userId,
+        data.adminLogin.tokenExpiration
+      );
+    }
+  });
+  const authContext = useContext(AuthContext);
+
+  // authContext.login(
+  //   data.
+  // )
 
   if (loading) {
     return <p>LOADING...</p>;
@@ -43,15 +57,12 @@ const Login: React.FC = () => {
   }
 
   const onSubmit = handleSubmit(({ email, password }) => {
-    console.log({ email }, { password });
-
     if (
       (!email && email.trim().length === 0) ||
       (!password && password.trim().length === 0)
     ) {
       return;
     }
-
     login({
       variables: {
         email: email,
@@ -61,9 +72,9 @@ const Login: React.FC = () => {
   });
 
   return (
-    <div className="page-wrapper">
-      <div className="container">
-        <div className="signup">
+    <div className={styles["page-wrapper"]}>
+      <div className={styles.container}>
+        <div className={styles.signup}>
           <img
             src={`${window.location.origin}/assets/logo.png`}
             srcSet={`${window.location.origin}/assets/logo@2x.png`}
@@ -75,13 +86,13 @@ const Login: React.FC = () => {
             <span>Sign up</span>
           </button>
         </div>
-        <div className="login">
+        <div className={styles.login}>
           <h1>Welcome Back!</h1>
-          <form className="login-form" onSubmit={onSubmit}>
+          <form className={styles["login-form"]} onSubmit={onSubmit}>
             <div className="form-control">
               <label htmlFor="email">E-mail:</label>
               <input type="text" name="email" ref={register} />
-              <span className="form-error-msg">
+              <span className={styles["form-error-msg"]}>
                 {errors.email && errors.email.message}
               </span>
             </div>
