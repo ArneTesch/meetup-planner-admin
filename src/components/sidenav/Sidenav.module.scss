@@ -38,6 +38,7 @@
 .navbar-items {
   font-size: 1.6rem;
   margin-top: 2.5rem;
+
   & a {
     text-decoration: none;
     font-weight: 600;
@@ -47,9 +48,34 @@
     width: 100%;
     display: inline-block;
     padding: 1rem 2rem;
+    outline: none;
+
+    & i {
+      margin-right: 1rem;
+    }
 
     &:hover {
       background-color: rgba(0, 0, 0, 0.05);
+    }
+  }
+
+  & button {
+    padding: 1rem 2rem;
+    font-family: "Open sans", serif;
+    font-weight: 600;
+    font-size: 1.6rem;
+    text-align: left;
+    border-radius: 0;
+    width: 100%;
+    outline: none;
+    max-height: 4.2rem;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    & i {
+      margin-right: 1rem;
     }
   }
 }
