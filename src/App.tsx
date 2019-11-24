@@ -71,6 +71,7 @@ const App: React.FC = () => {
             {!token && <Route path="/meetups" component={Meetups} exact />}
             {token && <Redirect from="/login" to="/meetups" exact />}
             {!token && <Route path="/login" component={Login} />}
+            {token && <Redirect from="/register" to="/meetups" exact />}
             {!token && <Route path="/register" component={Register} />}
             {token && <Route path="/meetups" component={Meetups} exact />}
             {!token && <Redirect to="/login" exact />}

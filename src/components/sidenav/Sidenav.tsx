@@ -30,7 +30,7 @@ export const Sidenav: React.FC<SideNavProps> = props => {
           <Link to="/meetups">
             <i className="icofont-meetup"></i>Meetups
           </Link>
-          <button onClick={logoutHandler}>
+          <button onClick={logoutHandler} className={`${styles.button} button`}>
             <i className="icofont-logout"></i>
             <span>Logout</span>
           </button>

@@ -1,15 +1,24 @@
 import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
-import React from "react";
+import React, { useContext } from "react";
 import useForm from "react-hook-form";
 import * as yup from "yup";
+import Loading from "../../components/loading/Loading";
+import AuthContext from "../../context/auth-context";
 import styles from "./register.module.scss";
+
+type RegisterResultData = {
+  token: string;
+  userId: string;
+  tokenExpiration: number;
+};
 
 const REGISTER_USER = gql`
   mutation CreateUser($email: String!, $password: String!) {
     createUser(userInput: { email: $email, password: $password }) {
-      _id
-      email
+      userId
+      token
+      tokenExpiration
     }
   }
 `;
@@ -35,23 +44,41 @@ const registerSchema = yup.object().shape({
     .oneOf([yup.ref("password"), null], "Passwords must match!")
 });
 
-export const Register: React.FC = () => {
+type RegisterProps = {
+  history: any;
+};
+
+export const Register: React.FC<RegisterProps> = props => {
+  const { history } = props;
   const { register, errors, handleSubmit } = useForm<FormData>({
     validationSchema: registerSchema
   });
+  const authContext = useContext(AuthContext);
 
-  const [registerUser, { data }] = useMutation(REGISTER_USER, {
-    variables: {
-      email: "",
-      password: ""
+  const [createUser, { loading, error }] = useMutation(REGISTER_USER, {
+    onCompleted: ({ createUser }) => {
+      authContext.login(
+        createUser.token,
+        createUser.userId,
+        createUser.tokenExpiration
+      );
+      localStorage.setItem("auth_token", createUser.token);
     }
   });
-
   /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
-  const onSubmit = (data: FormData) => {
-    console.log(data);
-    console.log("ok");
+  const onSubmit = (formData: FormData) => {
+    createUser({
+      variables: {
+        email: formData.email,
+        password: formData.password
+      }
+    });
   };
+
+  if (loading) {
+    return <Loading />;
+  }
+  if (error) return <p>An error occurred</p>;
 
   return (
     <div className={styles["page-wrapper"]}>
@@ -65,7 +92,7 @@ export const Register: React.FC = () => {
             <label htmlFor="email">E-mail:</label>
             <input type="text" name="email" ref={register} />
             <span className="form-error-msg">
-              {errors.password && errors.password.message}
+              {errors.email && errors.email.message}
             </span>
           </div>
 

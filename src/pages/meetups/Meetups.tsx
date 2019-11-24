@@ -1,6 +1,7 @@
 import { useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import React from "react";
+import Loading from "../../components/loading/Loading";
 import Sidenav from "../../components/sidenav/Sidenav";
 import styles from "./Meetups.module.scss";
 
@@ -40,7 +41,7 @@ const Meetups: React.FC = () => {
     return <p>ERROR ${error.message}</p>;
   }
   if (loading) {
-    return <p>LOADING</p>;
+    return <Loading />;
   }
   console.log({ data });
 

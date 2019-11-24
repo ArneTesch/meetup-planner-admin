@@ -4,6 +4,7 @@ import React, { useContext } from "react";
 import useForm from "react-hook-form";
 import { Link } from "react-router-dom";
 import * as yup from "yup";
+import { Loading } from "../../components/loading/Loading";
 import AuthContext from "../../context/auth-context";
 import styles from "./Login.module.scss";
 
@@ -34,6 +35,9 @@ const Login: React.FC = () => {
   const { register, errors, handleSubmit } = useForm<FormData>({
     validationSchema: LoginSchema
   });
+
+  const authContext = useContext(AuthContext);
+
   const [login, { loading, data }] = useLazyQuery(LOGIN, {
     onCompleted: data => {
       authContext.login(
@@ -43,10 +47,9 @@ const Login: React.FC = () => {
       );
     }
   });
-  const authContext = useContext(AuthContext);
 
   if (loading) {
-    return <p>LOADING...</p>;
+    return <Loading />;
   }
 
   if (data && data.adminLogin) {
