@@ -1,0 +1,11 @@
+@import "../../variables";
+
+.list-item {
+  width: 100%;
+  background-color: $accent-color;
+  box-shadow: $box-shadow;
+  color: white;
+  border-radius: 3px 3px 0 0;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}

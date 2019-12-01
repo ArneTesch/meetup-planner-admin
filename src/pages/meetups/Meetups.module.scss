@@ -1,6 +1,77 @@
-.nav-wrapper {
-  position: relative;
-}
+@import "../../variables";
+
 h1 {
   font-size: 5rem;
+}
+
+.cta-button {
+  background-color: $primary-color;
+
+  & i {
+    margin-right: 1rem;
+  }
+
+  &:hover {
+    background-color: darken($primary-color, 10%);
+  }
+}
+
+.meetup-list {
+  list-style: none;
+  font-size: 1.6rem;
+
+  & .title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding-bottom: 1rem;
+  }
+
+  & .icon-group {
+    & i:not(:first-child) {
+      margin-left: 1.5rem;
+    }
+
+    & i {
+      transition: color 0.2s ease;
+      &:hover {
+        color: $primary-color;
+        cursor: pointer;
+      }
+    }
+
+    & i.icon-group__item--delete {
+      &:hover {
+        color: $error-color;
+      }
+    }
+  }
+
+  & .hr {
+    margin-bottom: 1rem;
+  }
+
+  .meetup-details {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    justify-content: space-between;
+
+    &__field {
+      margin-bottom: 1rem;
+    }
+
+    & .label {
+      text-transform: uppercase;
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-bottom: 0.3rem;
+    }
+
+    & .tag {
+      background-color: $primary-color;
+      padding: 0.2rem 1rem;
+      border-radius: 20px;
+      display: inline;
+    }
+  }
 }

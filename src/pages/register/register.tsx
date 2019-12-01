@@ -44,12 +44,7 @@ const registerSchema = yup.object().shape({
     .oneOf([yup.ref("password"), null], "Passwords must match!")
 });
 
-type RegisterProps = {
-  history: any;
-};
-
-export const Register: React.FC<RegisterProps> = props => {
-  const { history } = props;
+export const Register: React.FC = () => {
   const { register, errors, handleSubmit } = useForm<FormData>({
     validationSchema: registerSchema
   });
@@ -65,8 +60,8 @@ export const Register: React.FC<RegisterProps> = props => {
       localStorage.setItem("auth_token", createUser.token);
     }
   });
-  /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
-  const onSubmit = (formData: FormData) => {
+  /* "handleSubmit" will validate your inputs before invoking "registerHandler" */
+  const registerHandler = (formData: FormData) => {
     createUser({
       variables: {
         email: formData.email,
@@ -86,7 +81,7 @@ export const Register: React.FC<RegisterProps> = props => {
         <h1>Create your account</h1>
         <form
           className={styles["register-form"]}
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit(registerHandler)}
         >
           <div className={`form-control ${styles["register-form__item"]}`}>
             <label htmlFor="email">E-mail:</label>

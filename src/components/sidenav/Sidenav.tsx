@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import AuthContext from "../../context/auth-context";
 import styles from "./Sidenav.module.scss";
 
@@ -12,7 +12,6 @@ export const Sidenav: React.FC<SideNavProps> = props => {
   const authContext = useContext(AuthContext);
 
   const logoutHandler = () => {
-    console.log("ok");
     authContext.logout();
   };
   return (
@@ -27,9 +26,9 @@ export const Sidenav: React.FC<SideNavProps> = props => {
           <p>Meetup Planner Admin</p>
         </div>
         <div className={styles["navbar-items"]}>
-          <Link to="/meetups">
+          <NavLink to="/meetups" activeClassName={styles.active}>
             <i className="icofont-meetup"></i>Meetups
-          </Link>
+          </NavLink>
           <button onClick={logoutHandler} className={`${styles.button} button`}>
             <i className="icofont-logout"></i>
             <span>Logout</span>
