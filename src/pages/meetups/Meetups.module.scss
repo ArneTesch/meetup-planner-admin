@@ -72,6 +72,10 @@ h1 {
       padding: 0.2rem 1rem;
       border-radius: 20px;
       display: inline;
+
+      &:not(:last-child) {
+        margin-right: 0.5rem;
+      }
     }
   }
 }

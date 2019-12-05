@@ -1,10 +1,9 @@
 import { useMutation, useQuery } from "@apollo/react-hooks";
-import gql from "graphql-tag";
 import React, { useState } from "react";
 import DayPickerInput from "react-day-picker/DayPickerInput";
 import "react-day-picker/lib/style.css";
 import useForm from "react-hook-form";
-import Select from "react-select";
+import Select, { ValueType } from "react-select";
 import ListItem from "../../components/listItem/ListItem";
 import Loading from "../../components/loading/Loading";
 import Modal from "../../components/modal/modal";
@@ -13,85 +12,18 @@ import convertDate from "../../helpers/convertDate";
 import Meetup from "../../interfaces/Meetup";
 import Speaker from "../../interfaces/Speaker";
 import styles from "./Meetups.module.scss";
-
-const GET_SPEAKERS = gql`
-  {
-    speakers {
-      _id
-      name
-      age
-      expertise {
-        title
-        domain
-      }
-      nationality
-      avatar
-    }
-  }
-`;
-
-const GET_MEETUPS = gql`
-  {
-    meetups {
-      _id
-      title
-      description
-      date
-      location
-      speakers {
-        _id
-        name
-        age
-        expertise {
-          title
-          domain
-        }
-        nationality
-        avatar
-      }
-      visitors {
-        _id
-        lastName
-        firstname
-        email
-      }
-    }
-  }
-`;
-
-const CREATE_MEETUP = gql`
-  mutation CreateMeetup(
-    $title: String!
-    $description: String!
-    $date: String!
-    $location: String!
-    $speakers: [ID!]
-  ) {
-    createMeetup(
-      meetupInput: {
-        title: $title
-        description: $description
-        date: $date
-        location: $location
-        speakers: $speakers
-      }
-    ) {
-      title
-      description
-      date
-      location
-      speakers {
-        _id
-        name
-      }
-    }
-  }
-`;
+import {
+  CREATE_MEETUP,
+  DELETE_MEETUP,
+  GET_MEETUPS,
+  GET_SPEAKERS,
+  UPDATE_MEETUP
+} from "./queries";
 
 type MeetupFormData = {
   title: string;
   description: string;
-  date?: string;
+  date?: Date | string;
   location: string;
   speakers: string[];
 };
@@ -102,65 +34,115 @@ type SpeakerOption = {
 };
 
 const Meetups: React.FC = () => {
-  const [meetups, setMeetups] = useState<Meetup[]>([]);
-  const [speakers, setSpeakers] = useState<Speaker[]>([]);
   const [isCreating, setIsCreating] = useState<boolean>(false);
   const [speakerOptions, setspeakerOptions] = useState<SpeakerOption[]>([]);
+  const [chosenSpeakers, setChosenSpeakers] = useState<SpeakerOption[]>([]);
   const [date, setDate] = useState<Date>();
-  const { loading, error } = useQuery(GET_MEETUPS, {
+  const [editMeetup, setEditMeetup] = useState<Meetup>();
+  const { data, loading: meetupLoading, error, refetch } = useQuery(
+    GET_MEETUPS
+  );
+  const { loading: speakerLoading } = useQuery(GET_SPEAKERS, {
     onCompleted: data => {
-      setMeetups(data.meetups);
+      data.speakers.forEach((speaker: Speaker) => {
+        setspeakerOptions(prevState => [
+          ...prevState,
+          {
+            value: speaker._id,
+            label: speaker.name
+          }
+        ]);
+      });
+    },
+    onError: err => {
+      console.log(err);
     }
   });
-  const { loading: speakerLoading, error: speakerError } = useQuery(
-    GET_SPEAKERS,
+  const { register, handleSubmit, setValue } = useForm<MeetupFormData>();
+  const [createMeetup] = useMutation(CREATE_MEETUP, {
+    onCompleted: () => {
+      refetch();
+      setIsCreating(false);
+    }
+  });
+  const [deleteMeetup, { loading: deleteMeetupLoading }] = useMutation(
+    DELETE_MEETUP,
     {
-      onCompleted: data => {
-        setSpeakers(data);
-        data.speakers.forEach((speaker: Speaker) => {
-          console.log(speaker);
-          setspeakerOptions(prevState => [
-            ...prevState,
-            {
-              value: speaker._id,
-              label: speaker.name
-            }
-          ]);
-        });
-      },
-      onError: err => {
-        console.log(err);
+      onCompleted: () => {
+        refetch();
       }
     }
   );
-  const { register, handleSubmit } = useForm<MeetupFormData>();
-  const [createMeetup] = useMutation(CREATE_MEETUP, {
-    onCompleted: ({ createMeetup }) => {
-      console.log(createMeetup);
+
+  const [updateMeetup, { loading: updateMeetupLoading }] = useMutation(
+    UPDATE_MEETUP,
+    {
+      onCompleted: () => {
+        refetch();
+        setIsCreating(false);
+      }
     }
-  });
+  );
 
   if (error) {
     return <p>ERROR ${error.message}</p>;
   }
-  if (loading) return <Loading />;
-  if (speakerLoading) return <Loading />;
+  if (meetupLoading || speakerLoading || deleteMeetupLoading)
+    return <Loading />;
 
   const addMeetupHandler = (formData: MeetupFormData) => {
-    formData.date = date && date.toLocaleDateString();
-    createMeetup({
+    formData.date = date;
+    const speakerArr = chosenSpeakers.map(speaker => speaker.value);
+
+    if (editMeetup) {
+      updateMeetup({
+        variables: {
+          id: editMeetup._id,
+          title: formData.title,
+          description: formData.description,
+          date: formData.date ? formData.date : editMeetup.date,
+          location: formData.location,
+          speakers: speakerArr
+        }
+      });
+    } else {
+      createMeetup({
+        variables: {
+          title: formData.title,
+          description: formData.description,
+          date: formData.date,
+          location: formData.location,
+          speakers: speakerArr
+        }
+      });
+    }
+  };
+
+  const deleteMeetupHandler = (meetupId: string) => {
+    deleteMeetup({
       variables: {
-        title: formData.title,
-        description: formData.description,
-        date: formData.date,
-        location: formData.location
-        // speakers: FormData.speakers
+        id: meetupId
       }
     });
   };
 
-  // const selectOptions;
-  console.log(speakerOptions);
+  const editMeetupHandler = (meetup: Meetup) => {
+    setEditMeetup(meetup);
+    setIsCreating(true);
+  };
+
+  const speakerSelectionHandler = (
+    speakerOption: ValueType<SpeakerOption>[]
+  ) => {
+    setChosenSpeakers(speakerOption as Array<SpeakerOption>);
+  };
+
+  const setDateHandler = (date: Date) => {
+    if (editMeetup && editMeetup.date) {
+      setDate(new Date(editMeetup.date));
+    }
+    setDate(date);
+  };
 
   return (
     <React.Fragment>
@@ -173,6 +155,9 @@ const Meetups: React.FC = () => {
                 type="text"
                 name="title"
                 placeholder="title"
+                defaultValue={
+                  editMeetup && editMeetup.title && editMeetup.title
+                }
                 ref={register}
               />
             </div>
@@ -181,13 +166,15 @@ const Meetups: React.FC = () => {
               <textarea
                 name="description"
                 placeholder="Meetup details ..."
+                defaultValue={editMeetup && editMeetup.description}
                 ref={register}
               />
             </div>
             <div className="form-control">
               <label htmlFor="date">Date</label>
               <DayPickerInput
-                onDayChange={(day: Date) => setDate(day)}
+                onDayChange={(day: Date) => setDateHandler(day)}
+                value={editMeetup && convertDate(editMeetup.date)}
                 ref={register}
               />
             </div>
@@ -197,19 +184,33 @@ const Meetups: React.FC = () => {
                 type="text"
                 placeholder="Location"
                 name="location"
+                defaultValue={editMeetup && editMeetup.location}
                 ref={register}
               />
             </div>
             <div className="form-control">
               <label htmlFor="title">Speakers</label>
-              {/* TODO: DROPDOWN LIST WITH SPEAKERS */}
-              <Select options={speakerOptions} />
-              {/* <input
-                type="text"
-                name="speakers"
+              <Select
                 placeholder="Speakers"
-                ref={register}
-              /> */}
+                classNamePrefix="multi-select"
+                className="multi-select"
+                defaultValue={
+                  editMeetup &&
+                  editMeetup.speakers &&
+                  editMeetup.speakers.map(speaker => {
+                    return {
+                      value: speaker._id,
+                      label: speaker.name
+                    };
+                  })
+                }
+                options={speakerOptions}
+                onChange={option =>
+                  option &&
+                  speakerSelectionHandler(option as Array<SpeakerOption>)
+                }
+                isMulti
+              />
             </div>
             <div className="modal__actions">
               <button
@@ -232,22 +233,29 @@ const Meetups: React.FC = () => {
               <h1>MEETUPS</h1>
               <button
                 className={styles["cta-button"]}
-                onClick={() => setIsCreating(true)}
+                onClick={() => {
+                  setEditMeetup(undefined);
+                  setIsCreating(true);
+                }}
               >
                 <i className="icofont-ui-add"></i>
                 <span>Add meetup</span>
               </button>
             </div>
             <ul className={styles["meetup-list"]}>
-              {meetups.map((meetup: Meetup) => (
+              {data.meetups.map((meetup: Meetup) => (
                 <ListItem key={meetup._id}>
                   <div className={`flex`}>
                     <h1 className={styles["title"]}>{meetup.title}</h1>
                     <div className={styles["icon-group"]}>
-                      <i className="icofont-ui-edit"></i>
                       <i
+                        onClick={() => editMeetupHandler(meetup)}
+                        className="icofont-ui-edit"
+                      />
+                      <i
+                        onClick={() => deleteMeetupHandler(meetup._id)}
                         className={`icofont-ui-delete ${styles["icon-group__item--delete"]}`}
-                      ></i>
+                      />
                     </div>
                   </div>
                   <hr className={`hr ${styles.hr}`} />

@@ -55,7 +55,8 @@ p {
   }
 
   & input,
-  textarea {
+  textarea,
+  .multi-select {
     padding: 0.5rem 1rem;
     border: 1px solid $border-color;
     border-radius: 3px;
@@ -69,6 +70,33 @@ p {
     text-align: left;
     color: $error-color;
     font-size: 1.2rem;
+  }
+}
+
+.multi-select {
+  padding: 0;
+
+  &__control {
+    border: none !important;
+
+    &:focus,
+    &:hover {
+      border: none !important;
+    }
+  }
+
+  &__control--is-focused {
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  &__menu {
+    border-radius: 3px;
+    left: 0;
+  }
+
+  &__multi-value {
+    background-color: rgba(0, 0, 0, 0.05);
   }
 }
 
