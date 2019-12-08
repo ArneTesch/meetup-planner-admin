@@ -89,7 +89,12 @@ const Meetups: React.FC = () => {
   if (error) {
     return <p>ERROR ${error.message}</p>;
   }
-  if (meetupLoading || speakerLoading || deleteMeetupLoading)
+  if (
+    meetupLoading ||
+    speakerLoading ||
+    deleteMeetupLoading ||
+    updateMeetupLoading
+  )
     return <Loading />;
 
   const addMeetupHandler = (formData: MeetupFormData) => {
