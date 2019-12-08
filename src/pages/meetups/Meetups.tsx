@@ -6,6 +6,7 @@ import useForm from "react-hook-form";
 import Select, { ValueType } from "react-select";
 import ListItem from "../../components/listItem/ListItem";
 import Loading from "../../components/loading/Loading";
+import LocationSearchInput from "../../components/locatioSearchInput/LocationSearchInput";
 import Modal from "../../components/modal/modal";
 import Sidenav from "../../components/sidenav/Sidenav";
 import convertDate from "../../helpers/convertDate";
@@ -38,6 +39,7 @@ const Meetups: React.FC = () => {
   const [speakerOptions, setspeakerOptions] = useState<SpeakerOption[]>([]);
   const [chosenSpeakers, setChosenSpeakers] = useState<SpeakerOption[]>([]);
   const [date, setDate] = useState<Date>();
+  const [location, setLocation] = useState<string>("");
   const [editMeetup, setEditMeetup] = useState<Meetup>();
   const { data, loading: meetupLoading, error, refetch } = useQuery(
     GET_MEETUPS
@@ -58,7 +60,7 @@ const Meetups: React.FC = () => {
       console.log(err);
     }
   });
-  const { register, handleSubmit, setValue } = useForm<MeetupFormData>();
+  const { register, handleSubmit } = useForm<MeetupFormData>();
   const [createMeetup] = useMutation(CREATE_MEETUP, {
     onCompleted: () => {
       refetch();
@@ -92,6 +94,7 @@ const Meetups: React.FC = () => {
 
   const addMeetupHandler = (formData: MeetupFormData) => {
     formData.date = date;
+    formData.location = location;
     const speakerArr = chosenSpeakers.map(speaker => speaker.value);
 
     if (editMeetup) {
@@ -101,7 +104,7 @@ const Meetups: React.FC = () => {
           title: formData.title,
           description: formData.description,
           date: formData.date ? formData.date : editMeetup.date,
-          location: formData.location,
+          location: formData.location ? formData.location : editMeetup.location,
           speakers: speakerArr
         }
       });
@@ -144,6 +147,10 @@ const Meetups: React.FC = () => {
     setDate(date);
   };
 
+  const selectLocationHandler = (location: string) => {
+    setLocation(location);
+  };
+
   return (
     <React.Fragment>
       {isCreating && (
@@ -175,17 +182,21 @@ const Meetups: React.FC = () => {
               <DayPickerInput
                 onDayChange={(day: Date) => setDateHandler(day)}
                 value={editMeetup && convertDate(editMeetup.date)}
-                ref={register}
               />
             </div>
             <div className="form-control">
               <label htmlFor="location">Location</label>
-              <input
+              {/* <input
                 type="text"
                 placeholder="Location"
                 name="location"
                 defaultValue={editMeetup && editMeetup.location}
                 ref={register}
+              /> */}
+
+              <LocationSearchInput
+                currentValue={editMeetup && editMeetup.location}
+                selectLocationHandler={selectLocationHandler}
               />
             </div>
             <div className="form-control">
