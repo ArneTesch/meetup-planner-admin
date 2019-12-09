@@ -38,6 +38,13 @@
 .navbar-items {
   font-size: 1.6rem;
   margin-top: 2.5rem;
+
+  & i {
+    margin-right: 1rem;
+    display: inline-block;
+    width: 2rem;
+  }
+
   & a {
     text-decoration: none;
     font-weight: 600;
@@ -47,9 +54,36 @@
     width: 100%;
     display: inline-block;
     padding: 1rem 2rem;
+    outline: none;
 
     &:hover {
       background-color: rgba(0, 0, 0, 0.05);
+    }
+  }
+
+  & a.active {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  & .button {
+    padding: 1rem 2rem;
+    font-family: "Open sans", serif;
+    text-align: left;
+    border-radius: 0;
+    width: 100%;
+    outline: none;
+    max-height: 4.2rem;
+    background-color: #fff;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    & span {
+      text-transform: capitalize;
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: black;
     }
   }
 }

@@ -1,25 +1,30 @@
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap");
 @import "./variables";
 
-html,
-body {
-  font-size: 62.5%;
+* {
   font-family: "Open sans", sans-serif;
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-button {
+html,
+body {
+  font-size: 62.5%;
+}
+
+button,
+.button {
   width: auto;
+  min-width: 18rem;
   height: 48px;
   padding: 0.5rem 1.2rem;
-  min-width: 18rem;
-  min-height: auto;
   border-radius: 24px;
   border: none;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  text-align: center;
+  outline: none;
 
   & span {
     font-size: 1.4rem;
@@ -29,9 +34,17 @@ button {
   }
 }
 
+p {
+  font-size: 1.4rem;
+}
+
 .form-control {
   display: flex;
   flex-flow: column;
+
+  &:not(:last-of-type) {
+    margin-bottom: 1rem;
+  }
 
   & label {
     font-size: 1.2rem;
@@ -41,7 +54,9 @@ button {
     margin-bottom: 0.5rem;
   }
 
-  & input {
+  & input,
+  textarea,
+  .multi-select {
     padding: 0.5rem 1rem;
     border: 1px solid $border-color;
     border-radius: 3px;
@@ -55,5 +70,71 @@ button {
     text-align: left;
     color: $error-color;
     font-size: 1.2rem;
+  }
+}
+
+.multi-select {
+  padding: 0;
+
+  &__control {
+    border: none !important;
+
+    &:focus,
+    &:hover {
+      border: none !important;
+    }
+  }
+
+  &__control--is-focused {
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  &__menu {
+    border-radius: 3px;
+    left: 0;
+  }
+
+  &__multi-value {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+}
+
+.flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hr {
+  border: 0.5px solid rgba(255, 255, 255, 0.5);
+}
+
+.main-wrapper {
+  padding: 1.5rem 1.5rem 1.5rem 0;
+}
+
+.modal__button {
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-transform: uppercase;
+
+  &:not(:last-child) {
+    margin-right: 1.5rem;
+  }
+}
+
+.modal__button--confirm {
+  background-color: $primary-color;
+
+  &:hover {
+    background-color: darken($primary-color, 10%);
+  }
+}
+
+.modal__button--cancel {
+  border: 1px solid $border-color;
+  &:hover {
+    background-color: darken(white, 5%);
   }
 }

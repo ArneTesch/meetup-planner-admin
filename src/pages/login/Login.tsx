@@ -2,7 +2,9 @@ import { useLazyQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import React, { useContext } from "react";
 import useForm from "react-hook-form";
+import { Link } from "react-router-dom";
 import * as yup from "yup";
+import { Loading } from "../../components/loading/Loading";
 import AuthContext from "../../context/auth-context";
 import styles from "./Login.module.scss";
 
@@ -33,6 +35,9 @@ const Login: React.FC = () => {
   const { register, errors, handleSubmit } = useForm<FormData>({
     validationSchema: LoginSchema
   });
+
+  const authContext = useContext(AuthContext);
+
   const [login, { loading, data }] = useLazyQuery(LOGIN, {
     onCompleted: data => {
       authContext.login(
@@ -42,14 +47,9 @@ const Login: React.FC = () => {
       );
     }
   });
-  const authContext = useContext(AuthContext);
-
-  // authContext.login(
-  //   data.
-  // )
 
   if (loading) {
-    return <p>LOADING...</p>;
+    return <Loading />;
   }
 
   if (data && data.adminLogin) {
@@ -76,15 +76,15 @@ const Login: React.FC = () => {
       <div className={styles.container}>
         <div className={styles.signup}>
           <img
-            src={`${window.location.origin}/assets/logo.png`}
-            srcSet={`${window.location.origin}/assets/logo@2x.png 2x`}
+            src={`${process.env.PUBLIC_URL}/assets/logo.png`}
+            srcSet={`${process.env.PUBLIC_URL}/assets/logo@2x.png 2x`}
             alt="logo"
           />
-          <h2>Welcome!</h2>
-          <p>Let's Connect</p>
-          <button>
+          <p>Let's Connect!</p>
+
+          <Link className="button" to="/register">
             <span>Sign up</span>
-          </button>
+          </Link>
         </div>
         <div className={styles.login}>
           <h1>Welcome Back!</h1>
@@ -107,7 +107,7 @@ const Login: React.FC = () => {
                 {errors.password && errors.password.message}
               </span>
             </div>
-            <button>
+            <button type="submit">
               <span>Login</span>
             </button>
           </form>
