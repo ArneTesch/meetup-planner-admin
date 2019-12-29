@@ -71,9 +71,9 @@ const App: React.FC = () => {
           <Switch>
             {!token && <Route path="/login" component={Login} exact />}
             {!token && <Route path="/register" component={Register} exact />}
+            {token && <Route path="/speakers" component={Speakers} exact />}
             {token && <Route path="/meetups" component={Meetups} exact />}
             {token && <Route path="/users" component={Users} exact />}
-            {token && <Route path="/speakers" component={Speakers} exact />}
             {token && <Redirect from="/login" to="/meetups" exact />}
             {token && <Redirect from="/register" to="/meetups" exact />}
             {!token && <Redirect from="*" to="/login" exact />}

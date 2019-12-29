@@ -1,0 +1,26 @@
+@import "../../variables";
+
+.page-header {
+  margin-bottom: 2.5rem;
+}
+
+h1 {
+  font-size: 5rem;
+}
+
+.cta-button {
+  background-color: $primary-color;
+
+  & i {
+    margin-right: 1rem;
+  }
+
+  &:hover {
+    background-color: darken($primary-color, 10%);
+  }
+}
+
+.speakers-list {
+  list-style: none;
+  font-size: 1.6rem;
+}

@@ -36,7 +36,7 @@ export const Sidenav: React.FC<SideNavProps> = props => {
             <i className="icofont-users"></i>Users
           </NavLink>
           <NavLink to="/speakers" activeClassName={styles.active}>
-            <i className="icofont-users"></i>Speakers
+            <i className="icofont-people"></i>Speakers
           </NavLink>
           <button onClick={logoutHandler} className={`${styles.button} button`}>
             <i className="icofont-logout"></i>
