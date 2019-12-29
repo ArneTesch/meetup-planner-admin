@@ -1,0 +1,9 @@
+.users-list {
+  list-style: none;
+
+  & .title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+}

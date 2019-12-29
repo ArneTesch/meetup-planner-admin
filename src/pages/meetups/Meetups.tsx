@@ -57,8 +57,10 @@ const Meetups: React.FC = () => {
       });
     },
     onError: err => {
-      console.log(err);
-    }
+      localStorage.clear();
+      console.error(err);
+    },
+    errorPolicy: "all"
   });
   const { register, handleSubmit } = useForm<MeetupFormData>();
   const [createMeetup] = useMutation(CREATE_MEETUP, {
@@ -192,12 +194,12 @@ const Meetups: React.FC = () => {
             <div className="form-control">
               <label htmlFor="location">Location</label>
               {/* <input
-                type="text"
-                placeholder="Location"
-                name="location"
-                defaultValue={editMeetup && editMeetup.location}
-                ref={register}
-              /> */}
+                  type="text"
+                  placeholder="Location"
+                  name="location"
+                  defaultValue={editMeetup && editMeetup.location}
+                  ref={register}
+                /> */}
 
               <LocationSearchInput
                 currentValue={editMeetup && editMeetup.location}
@@ -261,7 +263,7 @@ const Meetups: React.FC = () => {
             <ul className={styles["meetup-list"]}>
               {data.meetups.map((meetup: Meetup) => (
                 <ListItem key={meetup._id}>
-                  <div className={`flex`}>
+                  <div className="flex">
                     <h1 className={styles["title"]}>{meetup.title}</h1>
                     <div className={styles["icon-group"]}>
                       <i

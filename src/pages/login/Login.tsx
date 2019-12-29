@@ -16,8 +16,8 @@ type FormData = {
 const LoginSchema = yup.object().shape({
   email: yup
     .string()
-    .email("Please provide a valid e-mailadress.")
-    .required("E-mail is a required field."),
+    .email("Please provide a valid email adress.")
+    .required("Email is a required field."),
   password: yup.string().required("Password is a required field.")
 });
 

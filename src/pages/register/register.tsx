@@ -2,6 +2,7 @@ import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import React, { useContext } from "react";
 import useForm from "react-hook-form";
+import { Link } from "react-router-dom";
 import * as yup from "yup";
 import Loading from "../../components/loading/Loading";
 import AuthContext from "../../context/auth-context";
@@ -32,7 +33,7 @@ type FormData = {
 const registerSchema = yup.object().shape({
   email: yup
     .string()
-    .email("Please provide a valid e-mailadress.")
+    .email("Please provide a valid email address.")
     .required("E-mail is a required field."),
   password: yup
     .string()
@@ -108,6 +109,9 @@ export const Register: React.FC = () => {
           <button>
             <span>Create account</span>
           </button>
+          <Link to="/login">
+            <i className="icofont-arrow-left"></i> login
+          </Link>
         </form>
       </div>
     </div>

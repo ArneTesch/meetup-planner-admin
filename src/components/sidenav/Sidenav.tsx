@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useHistory } from "react-router-dom";
 import AuthContext from "../../context/auth-context";
 import styles from "./Sidenav.module.scss";
 
@@ -10,10 +10,13 @@ type SideNavProps = {
 export const Sidenav: React.FC<SideNavProps> = props => {
   const { children } = props;
   const authContext = useContext(AuthContext);
+  let history = useHistory();
 
   const logoutHandler = () => {
     authContext.logout();
+    history.push("/login");
   };
+
   return (
     <main>
       <nav className={styles.navbar}>
@@ -28,6 +31,12 @@ export const Sidenav: React.FC<SideNavProps> = props => {
         <div className={styles["navbar-items"]}>
           <NavLink to="/meetups" activeClassName={styles.active}>
             <i className="icofont-meetup"></i>Meetups
+          </NavLink>
+          <NavLink to="/users" activeClassName={styles.active}>
+            <i className="icofont-users"></i>Users
+          </NavLink>
+          <NavLink to="/speakers" activeClassName={styles.active}>
+            <i className="icofont-users"></i>Speakers
           </NavLink>
           <button onClick={logoutHandler} className={`${styles.button} button`}>
             <i className="icofont-logout"></i>
