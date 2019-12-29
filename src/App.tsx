@@ -12,6 +12,8 @@ import AuthContext from "./context/auth-context";
 import Login from "./pages/login/Login";
 import Meetups from "./pages/meetups/Meetups";
 import Register from "./pages/register/register";
+import Speakers from "./pages/speakers/Speakers";
+import Users from "./pages/users/Users";
 
 const httpLink = new HttpLink({ uri: "http://localhost:8000/graphql" });
 
@@ -67,14 +69,14 @@ const App: React.FC = () => {
           }}
         >
           <Switch>
-            {!token && <Redirect from="/meetups" to="login" exact />}
-            {!token && <Route path="/meetups" component={Meetups} exact />}
-            {token && <Redirect from="/login" to="/meetups" exact />}
-            {!token && <Route path="/login" component={Login} />}
-            {token && <Redirect from="/register" to="/meetups" exact />}
-            {!token && <Route path="/register" component={Register} />}
+            {!token && <Route path="/login" component={Login} exact />}
+            {!token && <Route path="/register" component={Register} exact />}
             {token && <Route path="/meetups" component={Meetups} exact />}
-            {!token && <Redirect to="/login" exact />}
+            {token && <Route path="/users" component={Users} exact />}
+            {token && <Route path="/speakers" component={Speakers} exact />}
+            {token && <Redirect from="/login" to="/meetups" exact />}
+            {token && <Redirect from="/register" to="/meetups" exact />}
+            {!token && <Redirect from="*" to="/login" exact />}
           </Switch>
         </AuthContext.Provider>
       </BrowserRouter>

@@ -61,4 +61,22 @@
       background-color: darken($primary-color, 10%);
     }
   }
+
+  & a {
+    font-size: 1.2rem;
+    text-decoration: none;
+    text-transform: uppercase;
+    color: $accent-color;
+    margin-top: 1rem;
+
+    & i {
+      font-size: 1.2rem;
+    }
+
+    &:hover,
+    &:focused,
+    &:active {
+      color: $primary-color;
+    }
+  }
 }
