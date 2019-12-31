@@ -76,7 +76,7 @@ const App: React.FC = () => {
             {token && <Route path="/users" component={Users} exact />}
             {token && <Redirect from="/login" to="/meetups" exact />}
             {token && <Redirect from="/register" to="/meetups" exact />}
-            {!token && <Redirect from="*" to="/login" exact />}
+            {/* {!token && <Redirect from="*" to="/login" exact />} */}
           </Switch>
         </AuthContext.Provider>
       </BrowserRouter>

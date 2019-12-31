@@ -24,3 +24,57 @@ h1 {
   list-style: none;
   font-size: 1.6rem;
 }
+
+.speaker-info {
+  display: flex;
+  flex-direction: row;
+
+  &__left {
+    flex: 5;
+  }
+
+  &__right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__left__name {
+    color: #fff;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 3px;
+  }
+
+  &__left__expertise {
+    color: $primary-color;
+    font-weight: 700;
+    font-size: 1rem;
+    text-transform: uppercase;
+  }
+
+  &__left__nationality {
+    font-size: 1.4rem;
+  }
+
+  & .label {
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 0.3rem;
+  }
+
+  &__right__avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 12rem;
+    height: 12rem;
+    border-radius: 50%;
+    background-color: #fff;
+    color: $accent-color;
+    font-size: 7rem;
+  }
+}

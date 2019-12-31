@@ -33,9 +33,35 @@ const Speakers: React.FC = () => {
           </button>
         </div>
         <ul className={styles["speakers-list"]}>
-          {speakers.map(speaker => (
+          {speakers.map((speaker: Speaker) => (
             <ListItem key={speaker._id}>
-              <div className="flex">{speaker.name}</div>
+              <div className={styles["speaker-info"]}>
+                <div className={styles["speaker-info__left"]}>
+                  <p className={styles["speaker-info__left__name"]}>
+                    {speaker.name} ({speaker.age}
+                    <span className="subscript">yr</span>)
+                  </p>
+                  {speaker.expertise && (
+                    <p className={styles["speaker-info__left__expertise"]}>
+                      {speaker.expertise.domain} - {speaker.expertise.title}
+                    </p>
+                  )}
+                  <hr />
+                  <span className={styles.label}>Nationality</span>
+                  <p className={styles["speaker-info__left__nationality"]}>
+                    {speaker.nationality}
+                  </p>
+                </div>
+                <div className={styles["speaker-info__right"]}>
+                  <div className={styles["speaker-info__right__avatar"]}>
+                    {speaker.avatar ? (
+                      <img src={speaker.avatar} />
+                    ) : (
+                      <i className="icofont-user-alt-3"></i>
+                    )}
+                  </div>
+                </div>
+              </div>
             </ListItem>
           ))}
         </ul>
