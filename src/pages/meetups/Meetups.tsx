@@ -6,7 +6,7 @@ import useForm from "react-hook-form";
 import Select, { ValueType } from "react-select";
 import ListItem from "../../components/listItem/ListItem";
 import Loading from "../../components/loading/Loading";
-import LocationSearchInput from "../../components/locatioSearchInput/LocationSearchInput";
+import LocationSearchInput from "../../components/locationSearchInput/LocationSearchInput";
 import Modal from "../../components/modal/modal";
 import Sidenav from "../../components/sidenav/Sidenav";
 import convertDate from "../../helpers/convertDate";
@@ -161,7 +161,11 @@ const Meetups: React.FC = () => {
   return (
     <React.Fragment>
       {isCreating && (
-        <Modal title="Create Meetup" onCancel={() => setIsCreating(false)}>
+        <Modal
+          title="Create Meetup"
+          onCancel={() => setIsCreating(false)}
+          onClickOutsideModal={() => setIsCreating(false)}
+        >
           <form onSubmit={handleSubmit(addMeetupHandler)}>
             <div className="form-control">
               <label htmlFor="title">Title</label>
@@ -193,14 +197,6 @@ const Meetups: React.FC = () => {
             </div>
             <div className="form-control">
               <label htmlFor="location">Location</label>
-              {/* <input
-                  type="text"
-                  placeholder="Location"
-                  name="location"
-                  defaultValue={editMeetup && editMeetup.location}
-                  ref={register}
-                /> */}
-
               <LocationSearchInput
                 currentValue={editMeetup && editMeetup.location}
                 selectLocationHandler={selectLocationHandler}

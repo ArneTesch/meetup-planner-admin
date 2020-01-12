@@ -54,6 +54,13 @@ p {
     margin-bottom: 0.5rem;
   }
 
+  & span {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.5);
+  }
+
   & input,
   textarea,
   .multi-select {

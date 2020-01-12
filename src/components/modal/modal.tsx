@@ -8,11 +8,12 @@ type ModalProps = {
   confirmText?: string;
   onCancel(): void;
   onConfirm?: void;
+  onClickOutsideModal(): void;
   children: React.ReactNode;
 };
 
 const Modal: React.FC<ModalProps> = props => {
-  const { title, children } = props;
+  const { title, children, onClickOutsideModal } = props;
 
   return (
     <React.Fragment>
@@ -20,27 +21,12 @@ const Modal: React.FC<ModalProps> = props => {
         <div className={styles["modal__header"]}>
           <h1>{title}</h1>
           <section className={styles["modal__content"]}>{children}</section>
-          {/* <section className={styles["modal__actions"]}>
-            {canCancel && (
-              <button
-                className={`button ${styles["modal__button--cancel"]} ${styles["modal__button"]}`}
-                onClick={onCancel}
-              >
-                Cancel
-              </button>
-            )}
-            {canConfirm && onConfirm && (
-              <button
-                className={`button ${styles["modal__button--confirm"]} ${styles["modal__button"]}`}
-                onClick={onConfirm}
-              >
-                {confirmText}
-              </button>
-            )}
-          </section> */}
         </div>
       </div>
-      <div className={styles.backdrop}></div>
+      <div
+        className={styles.backdrop}
+        onClick={() => onClickOutsideModal()}
+      ></div>
     </React.Fragment>
   );
 };
