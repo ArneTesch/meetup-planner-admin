@@ -16,6 +16,21 @@ export const GET_SPEAKERS = gql`
   }
 `;
 
+export const CREATE_SPEAKER = gql`
+  mutation CreateSpeaker($input: SpeakerInput!) {
+    createSpeaker(speakerInput: $input) {
+      name
+      age
+      nationality
+      avatar
+      expertise {
+        title
+        domain
+      }
+    }
+  }
+`;
+
 export const GET_MEETUPS = gql`
   {
     meetups {

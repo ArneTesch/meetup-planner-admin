@@ -2,7 +2,7 @@ import { useLazyQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import React, { useContext } from "react";
 import useForm from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import * as yup from "yup";
 import { Loading } from "../../components/loading/Loading";
 import AuthContext from "../../context/auth-context";
@@ -70,6 +70,10 @@ const Login: React.FC = () => {
       }
     });
   });
+
+  if (authContext.token) {
+    return <Redirect to="/meetups" />;
+  }
 
   return (
     <div className={styles["page-wrapper"]}>

@@ -1,43 +1,105 @@
-import { useQuery } from "@apollo/react-hooks";
-import React, { useState } from "react";
-import DayPickerInput from "react-day-picker/DayPickerInput";
+import { useMutation, useQuery } from "@apollo/react-hooks";
+import React, { useContext, useState } from "react";
 import useForm from "react-hook-form";
+import { Redirect } from "react-router-dom";
 import ImageUploader from "../../components/ImageUploader/ImageUploader";
 import ListItem from "../../components/listItem/ListItem";
 import Loading from "../../components/loading/Loading";
 import Modal from "../../components/modal/modal";
 import Sidenav from "../../components/sidenav/Sidenav";
+import AuthContext from "../../context/auth-context";
+import calculateAge from "../../helpers/calculateAge";
+import { cloudinaryUpload } from "../../helpers/cloudinary";
 import Speaker from "../../interfaces/Speaker";
-import { GET_SPEAKERS } from "../meetups/queries";
+import { CREATE_SPEAKER, GET_SPEAKERS } from "../meetups/queries";
 import styles from "./Speakers.module.scss";
 
+export type CloudinaryFile = {
+  name: string;
+  lastModified: number;
+  lastModifiedDate: Date;
+  webkitRelativePath: string;
+  size: number;
+  type: string;
+  path: string;
+  preview: string;
+};
+
+type FormData = {
+  name: string;
+  nationality: string;
+  age: Date;
+  avatar: any;
+  expertise_domain: string;
+  expertise_title: string;
+};
+
 const Speakers: React.FC = () => {
+  const auth = useContext(AuthContext);
   const [speakers, setSpeakers] = useState<Speaker[]>([]);
+  const [editSpeaker, setEditSpeaker] = useState<Speaker>();
   const [isCreating, setIsCreating] = useState<boolean>(false);
-  const { register, handleSubmit } = useForm();
-  const { loading: speakerLoading } = useQuery(GET_SPEAKERS, {
-    onCompleted: data => {
+  const [avatar, setAvatar] = useState<Blob | string | null>();
+  const [age, setAge] = useState<Date>();
+  const { register, handleSubmit } = useForm<FormData>();
+  const { data, loading: speakerLoading, refetch } = useQuery(GET_SPEAKERS, {
+    onCompleted: () => {
+      // TODO: check refetch --> onCompleted
       setSpeakers(data.speakers);
     }
   });
 
+  const [createSpeaker, { loading: speakerAddLoading }] = useMutation(
+    CREATE_SPEAKER,
+    {
+      onCompleted: () => {
+        refetch();
+        setIsCreating(false);
+      }
+    }
+  );
+
   const url = `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/upload`;
   const upload_preset = process.env.REACT_APP_CLOUDINARY_PRESET;
 
-  const setDateHandler = (date: Date) => {
-    // if (editMeetup && editMeetup.date) {
-    //   setDate(new Date(editMeetup.date));
-    // }
-    // setDate(date);
-
-    console.log({ date });
+  const addSpeakerHandler = (formData: FormData) => {
+    if (!upload_preset || !avatar) {
+      return;
+    }
+    cloudinaryUpload(upload_preset, url, avatar).then(result => {
+      if (!result.error && result.url) {
+        formData.avatar = result.url;
+      }
+      createSpeaker({
+        variables: {
+          input: {
+            name: formData.name,
+            age: formData.age,
+            nationality: formData.nationality,
+            avatar: formData.avatar,
+            expertise: {
+              title: formData.expertise_title,
+              domain: formData.expertise_domain
+            }
+          }
+        }
+      });
+    });
   };
 
-  const addSpeakerHandler = (formData: any) => {
-    console.log({ formData });
+  const setFileHandler = (file: Blob | string) => {
+    setAvatar(file);
   };
 
-  if (speakerLoading) return <Loading />;
+  const clearFileHandler = () => {
+    setAvatar(null);
+  };
+
+  if (speakerLoading || speakerAddLoading) return <Loading />;
+
+  if (!auth.token) {
+    return <Redirect to="/login" />;
+  }
 
   return (
     <React.Fragment>
@@ -54,10 +116,7 @@ const Speakers: React.FC = () => {
             </div>
             <div className="form-control">
               <label htmlFor="age">Age:</label>
-              <DayPickerInput
-                onDayChange={(day: Date) => setDateHandler(day)}
-                // value={editMeetup && convertDate(editMeetup.date)}ImageUploader
-              />
+              <input type="date" name="age" ref={register} />
             </div>
             <div className="form-control">
               <label htmlFor="nationality">Nationality:</label>
@@ -65,15 +124,11 @@ const Speakers: React.FC = () => {
             </div>
             <div className="form-control">
               <label htmlFor="avatar">Avatar:</label>
-              {/* <input
-                type="file"
-                name="avatar"
-                ref={register}
-                accept="image/png, image/jpeg"
-              /> */}
-
               {upload_preset && (
-                <ImageUploader uploadUrl={url} uploadPreset={upload_preset} />
+                <ImageUploader
+                  onClearFile={() => clearFileHandler()}
+                  onDropFile={files => setFileHandler(files)}
+                />
               )}
             </div>
             <div className="form-control">
@@ -112,12 +167,12 @@ const Speakers: React.FC = () => {
             </button>
           </div>
           <ul className={styles["speakers-list"]}>
-            {speakers.map((speaker: Speaker) => (
+            {data.speakers.map((speaker: Speaker) => (
               <ListItem key={speaker._id}>
                 <div className={styles["speaker-info"]}>
                   <div className={styles["speaker-info__left"]}>
                     <p className={styles["speaker-info__left__name"]}>
-                      {speaker.name} ({speaker.age}
+                      {speaker.name} ({calculateAge(speaker.age)}
                       <span className="subscript">yr</span>)
                     </p>
                     {speaker.expertise && (

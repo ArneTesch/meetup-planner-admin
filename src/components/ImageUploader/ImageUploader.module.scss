@@ -1,2 +1,50 @@
+@import "../../variables";
+
+.dropzone-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .image-uploader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 5rem;
+  border: 2px dashed $border-color;
+  outline: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  width: 100%;
+
+  &.isDragActive {
+    border-color: $primary-color;
+  }
+
+  & p {
+    color: rgba(#000, 0.5);
+  }
+}
+
+.avatar-preview {
+  width: 50px;
+  height: 50px;
+  margin-left: 0.5rem;
+
+  & img {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+.btn-clear-file {
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: rgba($error-color, 0.5);
+  margin-bottom: 0.5rem;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  margin-bottom: 0;
 }

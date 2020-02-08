@@ -76,5 +76,11 @@ h1 {
     background-color: #fff;
     color: $accent-color;
     font-size: 7rem;
+
+    & img {
+      font-size: 1rem;
+      max-height: 100%;
+      border-radius: 50%;
+    }
   }
 }

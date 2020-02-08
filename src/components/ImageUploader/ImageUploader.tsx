@@ -1,59 +1,81 @@
-import React, { useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import styles from "./ImageUploader.module.scss";
 
 type ImageUploaderProps = {
-  uploadUrl: string;
-  uploadPreset: string;
+  onDropFile(file: any): void;
+  onClearFile(): void;
+};
+
+type File = {
+  preview: string;
 };
 
 const ImageUploader: React.FC<ImageUploaderProps> = props => {
-  const { uploadUrl, uploadPreset } = props;
-  const onDrop = useCallback(
-    acceptedFiles => {
-      const formData = new FormData();
-
-      const xhr = new XMLHttpRequest();
-      if (!uploadPreset || !uploadUrl) {
-        return console.error("No upload preset or url defined!");
-      }
-
-      xhr.open("POST", uploadUrl, true);
-      xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-
-      xhr.onerror = e => {
-        console.error(e, "Error during upload");
-      };
-
-      xhr.onreadystatechange = e => {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-          const response = JSON.parse(xhr.responseText);
-          const responseUrl = response.secure_url;
-          console.log("successfully uploaded!", responseUrl);
-        }
-      };
-
-      formData.append("upload_preset", uploadPreset);
-      formData.append("tags", "avatar upload");
-      formData.append("file", acceptedFiles[0]);
-      xhr.send(formData);
-    },
-    [uploadPreset, uploadUrl]
-  );
+  const { onDropFile, onClearFile } = props;
+  const [files, setFiles] = useState<File[]>([]);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: "image/x-png, image/gif, image/jpeg, image/webp"
+    onDrop: acceptedFiles => {
+      setFiles(
+        acceptedFiles.map(file =>
+          Object.assign(file, {
+            preview: URL.createObjectURL(file)
+          })
+        )
+      );
+      onDropFile(acceptedFiles[0]);
+    },
+    onDropRejected: () => {
+      console.log("rejected");
+    },
+    accept: "image/x-png, image/gif, image/jpeg, image/webp, image/png",
+    multiple: false
   });
 
-  return (
-    <div className={styles["image-uploader"]} {...getRootProps()}>
-      <input multiple={false} name="avatar" {...getInputProps()} />
-      {isDragActive ? (
-        <p>Drop the files here ...</p>
-      ) : (
-        <p>Drag 'n' drop some files here, or click to select files</p>
-      )}
+  useEffect(
+    () => () => {
+      // Make sure to revoke the data uris to avoid memory leaks
+      files.forEach(file => URL.revokeObjectURL(file.preview));
+    },
+    [files]
+  );
+
+  const preview = files.map((file, i) => (
+    <div className={styles["avatar-preview"]} key={i}>
+      <img src={file.preview} alt="thumbnail preview" />
     </div>
+  ));
+
+  const onClearFileHandler = () => {
+    setFiles([]);
+    onClearFile();
+  };
+
+  return (
+    <section className={styles["dropzone-container"]}>
+      <div
+        className={`${styles["image-uploader"]} ${
+          isDragActive ? styles.isDragActive : ""
+        } `}
+        {...getRootProps()}
+      >
+        {!files.length && <input {...getInputProps()} />}
+
+        {isDragActive ? (
+          <p>Drop the files here ...</p>
+        ) : !files.length ? (
+          <p>Drag 'n' drop some files here, or click to select files</p>
+        ) : (
+          <button
+            className={styles["btn-clear-file"]}
+            onClick={() => onClearFileHandler()}
+          >
+            <i className="icofont-close"></i> clear files
+          </button>
+        )}
+      </div>
+      {files.length ? preview : <React.Fragment />}
+    </section>
   );
 };
 

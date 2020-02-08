@@ -1,14 +1,16 @@
 import { useMutation, useQuery } from "@apollo/react-hooks";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import DayPickerInput from "react-day-picker/DayPickerInput";
 import "react-day-picker/lib/style.css";
 import useForm from "react-hook-form";
+import { Redirect } from "react-router-dom";
 import Select, { ValueType } from "react-select";
 import ListItem from "../../components/listItem/ListItem";
 import Loading from "../../components/loading/Loading";
 import LocationSearchInput from "../../components/locationSearchInput/LocationSearchInput";
 import Modal from "../../components/modal/modal";
 import Sidenav from "../../components/sidenav/Sidenav";
+import AuthContext from "../../context/auth-context";
 import convertDate from "../../helpers/convertDate";
 import Meetup from "../../interfaces/Meetup";
 import Speaker from "../../interfaces/Speaker";
@@ -35,6 +37,7 @@ type SpeakerOption = {
 };
 
 const Meetups: React.FC = () => {
+  const auth = useContext(AuthContext);
   const [isCreating, setIsCreating] = useState<boolean>(false);
   const [speakerOptions, setspeakerOptions] = useState<SpeakerOption[]>([]);
   const [chosenSpeakers, setChosenSpeakers] = useState<SpeakerOption[]>([]);
@@ -157,6 +160,10 @@ const Meetups: React.FC = () => {
   const selectLocationHandler = (location: string) => {
     setLocation(location);
   };
+
+  if (!auth.token) {
+    return <Redirect to="/login" />;
+  }
 
   return (
     <React.Fragment>
